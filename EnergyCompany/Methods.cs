@@ -12,7 +12,6 @@ namespace EnergyCompany
         public static void Startup(string appName, string appVersion, string appAuthor)
         {
             Console.ForegroundColor = ConsoleColor.Green;
-
             Console.WriteLine("{0}: Version {1} by {2}", appName, appVersion, appAuthor);
             Console.WriteLine();
 
@@ -31,42 +30,181 @@ namespace EnergyCompany
             Console.WriteLine("(6) Exit.");
         }
 
+        public static string Validate(string input, int option)
+        {
+            //option 0 = string
+            //option 1 = int
+            //option 2 = meter model id
+            //option 3 = switch state
+            //option 4 = delete
+
+            int? inputInt = null;
+                
+            switch (option)
+            {
+                case 0:
+                    if (string.IsNullOrWhiteSpace(input))
+                    {
+                        Console.WriteLine("\nYour input is empty or invalid! Please, try again.");
+                        input = Console.ReadLine();
+                        input = Validate(input, option);
+                    }
+                    break;
+                case 1:
+                    if (!string.IsNullOrWhiteSpace(input))
+                    {
+                        if (!int.TryParse(input, out int value))
+                        {
+                            Console.WriteLine("\nYour input must be an integer! Please, try again.");
+                            input = Console.ReadLine();
+                            input = Validate(input, option);
+                        }
+                        else
+                        {
+                            inputInt = Int32.Parse(input);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nYour input is empty or invalid! Please, try again.");
+                        input = Console.ReadLine();
+                        input = Validate(input, option);
+                    }
+                    break;
+                case 2:
+                    if (!string.IsNullOrWhiteSpace(input))
+                    {
+                        if (!int.TryParse(input, out int value))
+                        {
+                            Console.WriteLine("\nYour input must be an integer! Please, try again.");
+                            input = Console.ReadLine();
+                            input = Validate(input, option);
+                        }
+                        else
+                        {
+                            inputInt = Int32.Parse(input);
+                            if (Array.BinarySearch(new int[] { 16, 17, 18, 19 }, inputInt) < 0)
+                            {
+                                Console.WriteLine("Your input is invalid! Please, type a number between 16 and 19 for the Meter Model Id.");
+                                input = Console.ReadLine();
+                                input = Validate(input, option);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nYour input is empty or invalid! Please, try again.");
+                        input = Console.ReadLine();
+                        input = Validate(input, option);
+                    }
+                    break;
+                case 3:
+                    if (!string.IsNullOrWhiteSpace(input))
+                    {
+                        if (!int.TryParse(input, out int value))
+                        {
+                            Console.WriteLine("\nYour input must be an integer! Please, try again.");
+                            input = Console.ReadLine();
+                            input = Validate(input, option);
+                        }
+                        else
+                        {
+                            inputInt = Int32.Parse(input);
+                            if (Array.BinarySearch(new int[] { 0, 1, 2 }, inputInt) < 0)
+                            {
+                                Console.WriteLine("Your input is invalid! Please, type a number between 0 and 2 for the Switch State.");
+                                input = Console.ReadLine();
+                                input = Validate(input, option);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nYour input is empty or invalid! Please, try again.");
+                        input = Console.ReadLine();
+                        input = Validate(input, option);
+                    }
+                    break;
+                case 4:
+                    if (!string.IsNullOrWhiteSpace(input))
+                    {
+                        if (!int.TryParse(input, out int value))
+                        {
+                            Console.WriteLine("\nYour input must be an integer! Please, try again.");
+                            input = Console.ReadLine();
+                            input = Validate(input, option);
+                        }
+                        else
+                        {
+                            if (Array.BinarySearch(new int[] { 0, 1 }, Int32.Parse(input)) < 0)
+                            {
+                                Console.WriteLine("Your option must be valid! Choose between (0) for NO or (1) for YES.");
+                                input = Console.ReadLine();
+                                input = Validate(input, option);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nYour input is empty or invalid! Please, try again.");
+                        input = Console.ReadLine();
+                        input = Validate(input, option);
+                    }
+                    break;
+            }
+
+            if (string.IsNullOrWhiteSpace(input))
+                return inputInt.ToString();
+            else
+                return input;
+        }
+
+        public static void Print(string input, ConsoleColor colour)
+        {
+            Console.ForegroundColor = colour;
+            Console.WriteLine(input);
+            Console.ResetColor();
+        }
+
         public static Meter Insert(List<Meter> MeterList)
         {
-            string Id;
+            string input;
 
             Console.Write("Insert the Endpoint Serial Number you want to add: ");
-            Id = Console.ReadLine();
+            input = Console.ReadLine();
+            input = Validate(input, 0);
 
-            Meter meter = FindBySerialNumber(MeterList, Id);
+            Meter meter = FindBySerialNumber(MeterList, input);
 
             if (!string.IsNullOrEmpty(meter.EndpointSerialNumber))
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nERROR: There is already an endpoint with that Serial Number!\n");
-                Console.ResetColor();
+                Print("\nERROR: There is already an endpoint with that Serial Number!", ConsoleColor.Red);
 
                 return new Meter() { };
             }
             else
             {
-                meter.EndpointSerialNumber = Id;
+                meter.EndpointSerialNumber = input;
 
-                Console.Write("Insert the Meter Model Id: ");
-                meter.MeterModelId = Int32.Parse(Console.ReadLine());
+                Console.WriteLine("Insert the Meter Model Id.");
+                Console.WriteLine("Options: (16) for NSX1P2W, (17) for NSX1P3W, (18) for NSX2P3W or (19) for NSX3P4W");
+                input = Console.ReadLine();
+                meter.MeterModelId = (EnumMeterModel)Int32.Parse(Validate(input, 2));
 
                 Console.Write("Insert the Meter Number: ");
-                meter.MeterNumber = Int32.Parse(Console.ReadLine());
+                input = Console.ReadLine();
+                meter.MeterNumber = Int32.Parse(Validate(input, 1));
 
                 Console.Write("Insert the Meter Firmware Version: ");
-                meter.MeterFirmwareVersion = Console.ReadLine();
+                input = Console.ReadLine();
+                meter.MeterFirmwareVersion = Validate(input, 0);
 
                 Console.Write("Insert the Switch State of the Meter: ");
-                meter.SwitchState = Int32.Parse(Console.ReadLine());
+                Console.WriteLine("Options: (0) for Disconnected, (1) for Connected or (2) for Armed.");
+                input = Console.ReadLine();
+                meter.SwitchState = (EnumSwitchState)Int32.Parse(Validate(input, 3));
 
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("\nThe following meter was added!"); 
-                Console.ResetColor();
+                Print("\nThe following meter was added!", ConsoleColor.Blue);
 
                 Console.WriteLine(meter);
 
@@ -76,40 +214,33 @@ namespace EnergyCompany
         
         public static List<Meter> Edit(List<Meter> MeterList)
         {
-            string Id;
-            int switchState;
+            string input;
 
-            Console.Write("\nInsert the Endpoint Serial Number you want to edit: ");
-            Id = Console.ReadLine();
+            Console.Write("\nInsert the Endpoint Serial Number of the meter you want to edit: ");
+            input = Console.ReadLine();
+            input = Validate(input, 0);
 
-            Meter meter = FindBySerialNumber(MeterList, Id);
+            Meter meter = FindBySerialNumber(MeterList, input);
 
             if (string.IsNullOrEmpty(meter.EndpointSerialNumber))
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nERROR: There is no endpoint with that Serial Number!");
-                Console.ResetColor();
+                Print("\nERROR: There is no endpoint with that Serial Number!", ConsoleColor.Red);
 
                 return new List<Meter>() { };
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nMeter found!");
-                Console.ResetColor();
+                Print("\nMeter found!", ConsoleColor.Red);
 
                 Console.WriteLine(meter);
 
                 Console.WriteLine("To which Switch State do you want to change?");
                 Console.WriteLine("Type (0) for Disconnected, (1) for Connected and (2) for Armed.");
 
-                switchState = Int32.Parse(Console.ReadLine());
+                input = Console.ReadLine();
+                meter.SwitchState = (EnumSwitchState)Int32.Parse(Validate(input, 3));
 
-                meter.SwitchState = switchState; 
-
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("\nThe following meter was changed!");
-                Console.ResetColor();
+                Print("\nThe following meter was changed!", ConsoleColor.Blue);
 
                 Console.WriteLine(meter);
 
@@ -119,28 +250,33 @@ namespace EnergyCompany
 
         public static List<Meter> Delete(List<Meter> MeterList)
         {
-            string Id;
+            string input;
 
             Console.Write("\nInsert the Endpoint Serial Number you want to delete: ");
-            Id = Console.ReadLine();
+            input = Console.ReadLine();
+            input = Validate(input, 0);
 
-            Meter meter = FindBySerialNumber(MeterList, Id);
+            Meter meter = FindBySerialNumber(MeterList, input);
 
             if (string.IsNullOrEmpty(meter.EndpointSerialNumber))
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nERROR: There is no endpoint with that Serial Number!");
-                Console.ResetColor();
+                Print("\nERROR: There is no endpoint with that Serial Number!", ConsoleColor.Red);
 
                 return new List<Meter>() { };
             }
             else 
             {
-                MeterList.Remove(meter);
+                Print("\nAre you SURE you want to DELETE this Meter? This action cannot be undone.", ConsoleColor.Red);
+                Console.WriteLine("Type (0) for NO or (1) for YES.");
+                input = Console.ReadLine();
+                input = Validate(input, 4);
 
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("\nThe meter was deleted!");
-                Console.ResetColor();
+                if (input == "1")
+                {
+                    MeterList.Remove(meter);
+
+                    Print("\nThe meter was deleted!", ConsoleColor.Blue);
+                }
 
                 return MeterList;
             }
@@ -164,24 +300,21 @@ namespace EnergyCompany
 
         public static void ListById(List<Meter> MeterList)
         {
-            string Id;
-
+            string input;
+            
             Console.Write("\nInsert the Endpoint Serial Number you want to search: ");
-            Id = Console.ReadLine();
+            input = Console.ReadLine();
+            input = Validate(input, 0);
 
-            Meter meter = FindBySerialNumber(MeterList, Id);
+            Meter meter = FindBySerialNumber(MeterList, input);
 
             if (string.IsNullOrEmpty(meter.EndpointSerialNumber))
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nERROR: There is no endpoint with that Serial Number!");
-                Console.ResetColor();
+                Print("\nERROR: There is no endpoint with that Serial Number!", ConsoleColor.Red);
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("\nMeter found!");
-                Console.ResetColor();
+                Print("\nMeter found!", ConsoleColor.Blue);
 
                 Console.WriteLine(meter);
             }

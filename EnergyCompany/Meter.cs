@@ -3,17 +3,32 @@ using System.IO.Ports;
 
 namespace EnergyCompany
 {
+    public enum EnumSwitchState
+    {
+        Disconnected = 0,
+        Connected = 1,
+        Armed = 2
+    }
+
+    public enum EnumMeterModel
+    {
+        NSX1P2W = 16,
+        NSX1P3W = 17,
+        NSX2P3W = 18,
+        NSX3P4W = 19
+    }
+
     public class Meter
     {
         public string EndpointSerialNumber { get; set; }
 
-        public int MeterModelId { get; set; }
+        public EnumMeterModel MeterModelId { get; set; }
 
         public int MeterNumber { get; set; }
 
         public string MeterFirmwareVersion { get; set; }
 
-        public int SwitchState { get; set; }
+        public EnumSwitchState SwitchState { get; set; }
 
         public override string ToString()
         {

@@ -45,9 +45,7 @@ namespace EnergyCompany
                 {
                     if (input == "0")
                     {
-                        Console.ForegroundColor = ConsoleColor.White;
-                        Console.WriteLine("\nChoose another option then.");
-                        Console.ResetColor();
+                        Methods.Print("\nChoose another option then.", ConsoleColor.White);
                         Methods.ShowOptions();
                         close = false;
                         input = Console.ReadLine();
@@ -56,9 +54,7 @@ namespace EnergyCompany
 
                     else if (input == "1")
                     {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("The application has been closed.");
-                        Console.ResetColor();
+                        Methods.Print("The application has been closed", ConsoleColor.Red);
                         Environment.Exit(0);
                     }
 
@@ -77,9 +73,7 @@ namespace EnergyCompany
 
                 while (!exists)
                 {
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine("\nPlease, type a valid option!\n");
-                    Console.ResetColor();
+                    Methods.Print("\nPlease, type a valid option!\n", ConsoleColor.White);
 
                     input = Console.ReadLine();
 
@@ -113,14 +107,17 @@ namespace EnergyCompany
                         Recall();
                         break;
                     case "2":
-                        List<Meter> temp = MeterList;
+                        List<Meter> tempEdit = MeterList;
                         MeterList = Methods.Edit(MeterList);
                         if (!MeterList.Any())
-                            MeterList = temp;
+                            MeterList = tempEdit;
                         Recall();
                         break;
                     case "3":
+                        List<Meter> tempDelete = MeterList;
                         MeterList = Methods.Delete(MeterList);
+                        if (!MeterList.Any())
+                            MeterList = tempDelete;
                         Recall();
                         break;
                     case "4":
@@ -132,17 +129,13 @@ namespace EnergyCompany
                         Recall();
                         break;
                     case "6":
-                        Console.ForegroundColor = ConsoleColor.White;
-                        Console.WriteLine("\nAre you sure you want to close the application? Type (0) for NO and (1) for YES.");
-                        Console.ResetColor();
+                        Methods.Print("\nAre you sure you want to close the application? Type (0) for NO and (1) for YES.", ConsoleColor.White);
                         input = Console.ReadLine();
                         close = true;
                         Verify();
                         break;
                     default:
-                        Console.ForegroundColor = ConsoleColor.White;
-                        Console.WriteLine("\nPlease, choose an option to continue.");
-                        Console.ResetColor();
+                        Methods.Print("\nPlease, choose an option to continue.", ConsoleColor.White);
                         Methods.ShowOptions();
                         input = Console.ReadLine();
                         Verify();
@@ -156,8 +149,8 @@ namespace EnergyCompany
             //Console.WriteLine("\nThere is no meter with that serial number!\n");
             Methods.Startup(appName, appVersion, appAuthor);
 
-            MeterList.Add(new Meter() { EndpointSerialNumber = "a", MeterModelId = 0, MeterNumber = 0, MeterFirmwareVersion = "a", SwitchState = 0 });
-            MeterList.Add(new Meter() { EndpointSerialNumber = "b", MeterModelId = 1, MeterNumber = 1, MeterFirmwareVersion = "b", SwitchState = 1 });
+            MeterList.Add(new Meter() { EndpointSerialNumber = "a", MeterModelId = (EnumMeterModel)16, MeterNumber = 0, MeterFirmwareVersion = "a", SwitchState = (EnumSwitchState)0 });
+            MeterList.Add(new Meter() { EndpointSerialNumber = "b", MeterModelId = (EnumMeterModel)19, MeterNumber = 1, MeterFirmwareVersion = "b", SwitchState = (EnumSwitchState)1 });
 
             Methods.ShowOptions();
 
