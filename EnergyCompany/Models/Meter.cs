@@ -1,23 +1,7 @@
-﻿using System;
-using System.IO.Ports;
+﻿using EnergyCompany.ENUMs;
 
 namespace EnergyCompany
 {
-    public enum EnumSwitchState
-    {
-        Disconnected = 0,
-        Connected = 1,
-        Armed = 2
-    }
-
-    public enum EnumMeterModel
-    {
-        NSX1P2W = 16,
-        NSX1P3W = 17,
-        NSX2P3W = 18,
-        NSX3P4W = 19
-    }
-
     public class Meter
     {
         public string EndpointSerialNumber { get; set; }
