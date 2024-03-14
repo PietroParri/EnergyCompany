@@ -4,9 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-internal class Methods : Program, IMethods
+public class Methods : Program, IMethods
 {
     private static Validation _validation = new Validation();
+    private static MethodsServices _services = new MethodsServices();
 
     public void Startup(string appName, string appVersion, string appAuthor)
     {
@@ -169,30 +170,15 @@ internal class Methods : Program, IMethods
         switch (input)
         {
             case "1":
-                inputMeter = Insert(MeterList);
-                if (!string.IsNullOrEmpty(inputMeter.EndpointSerialNumber))
-                    MeterList.Add(new Meter()
-                    {
-                        EndpointSerialNumber = inputMeter.EndpointSerialNumber,
-                        MeterModelId = inputMeter.MeterModelId,
-                        MeterNumber = inputMeter.MeterNumber,
-                        MeterFirmwareVersion = inputMeter.MeterFirmwareVersion,
-                        SwitchState = inputMeter.SwitchState
-                    });
+                inputMeter = InsertController(MeterList);
                 Recall();
                 break;
             case "2":
-                List<Meter> tempEdit = MeterList;
-                MeterList = Edit(MeterList);
-                if (!MeterList.Any())
-                    MeterList = tempEdit;
+                MeterList = EditController(MeterList);
                 Recall();
                 break;
             case "3":
-                List<Meter> tempDelete = MeterList;
-                MeterList = Delete(MeterList);
-                if (!MeterList.Any())
-                    MeterList = tempDelete;
+                MeterList = DeleteController(MeterList);
                 Recall();
                 break;
             case "4":
@@ -228,7 +214,7 @@ internal class Methods : Program, IMethods
         Console.ResetColor();
     }
 
-    public Meter Insert(List<Meter> MeterList)
+    public Meter InsertController(List<Meter> MeterList)
     {
         string input;
 
@@ -272,7 +258,7 @@ internal class Methods : Program, IMethods
 
                 Console.WriteLine(meter);
 
-                return meter;
+                return _services.InsertService(MeterList, meter.EndpointSerialNumber, meter.MeterModelId, meter.MeterNumber, meter.MeterFirmwareVersion, meter.SwitchState);
             }
         }
         catch (Exception ex)
@@ -282,9 +268,10 @@ internal class Methods : Program, IMethods
         }
     }
 
-    public List<Meter> Edit(List<Meter> MeterList)
+    public List<Meter> EditController(List<Meter> MeterList)
     {
         string input;
+        EnumSwitchState output;
 
         Console.Write("\nInsert the Endpoint Serial Number of the meter you want to edit: ");
         input = Console.ReadLine();
@@ -298,7 +285,7 @@ internal class Methods : Program, IMethods
             {
                 Print("\nERROR: There is no endpoint with that Serial Number!", ConsoleColor.Red);
 
-                return new List<Meter>() { };
+                return MeterList;
             }
             else
             {
@@ -310,11 +297,11 @@ internal class Methods : Program, IMethods
                 Console.WriteLine("Type (0) for Disconnected, (1) for Connected and (2) for Armed.");
 
                 input = Console.ReadLine();
-                meter.SwitchState = (EnumSwitchState)Int32.Parse(Validate(input, 3));
+                output = (EnumSwitchState)Int32.Parse(Validate(input, 3));
 
-                Print("\nThe following meter was changed!", ConsoleColor.Blue);
+                Print("\nThe chosen meter has been changed!", ConsoleColor.Blue);
 
-                Console.WriteLine(meter);
+                meter = _services.EditService(meter, output);
 
                 return MeterList;
             }
@@ -326,7 +313,7 @@ internal class Methods : Program, IMethods
         }
     }
 
-    public List<Meter> Delete(List<Meter> MeterList)
+    public List<Meter> DeleteController(List<Meter> MeterList)
     {
         string input;
 
@@ -342,7 +329,7 @@ internal class Methods : Program, IMethods
             {
                 Print("\nERROR: There is no endpoint with that Serial Number!", ConsoleColor.Red);
 
-                return new List<Meter>() { };
+                return MeterList;
             }
             else
             {
@@ -353,7 +340,7 @@ internal class Methods : Program, IMethods
 
                 if (input == "1")
                 {
-                    MeterList.Remove(meter);
+                    _services.DeleteService(MeterList, meter);
 
                     Print("\nThe meter was deleted!", ConsoleColor.Blue);
                 }

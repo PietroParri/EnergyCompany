@@ -10,7 +10,7 @@ public class Program
 
     public static string input;
 
-    private static void Main(string[] args)
+    public static void Main(string[] args)
     {
         Methods _methods = new Methods();
         Validation _validation = new Validation();
@@ -28,7 +28,7 @@ public class Program
             *  EndpointSerialNumber = "*STRING*",
             *  MeterModelId = (EnumMeterModel)*INT*,
             *  MeterNumber = *INT*,
-            *  MeterFirmwareVersion = "*STRING",
+            *  MeterFirmwareVersion = "*STRING*",
             *  SwitchState = (EnumSwitchState)*INT*
             * }); 
         */

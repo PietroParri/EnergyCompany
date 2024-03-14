@@ -10,11 +10,11 @@ interface IMethods
 
     void CallSwitch();
         
-    Meter Insert(List<Meter> MeterList);
+    Meter InsertController(List<Meter> MeterList);
 
-    List<Meter> Edit(List<Meter> MeterList);
+    List<Meter> EditController(List<Meter> MeterList);
 
-    List<Meter> Delete(List<Meter> MeterList);
+    List<Meter> DeleteController(List<Meter> MeterList);
 
     void ListAll(List<Meter> MeterList);
 
